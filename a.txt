@@ -1,1 +1,125 @@
 mongodb+srv://shahmuskan29072001:MuskanShah@backenddevlopment.0coboxh.mongodb.net/?retryWrites=true&w=majority
+
+
+
+const express = require('express');
+const multer  = require('multer');
+const path = require('path');
+
+const app = express();
+const port = 3000;
+
+// Multer configuration for handling image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({ storage: storage })
+
+// POST endpoint for uploading images
+app.post('/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  res.json({ imageUrl: req.file.path });
+});
+
+app.listen(port, () => {
+  console.log(`Image upload API running on port ${port}`);
+});
+
+
+
+
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const multer = require('multer');
+
+// const app = express();
+// const PORT = process.env.PORT || 3000;
+
+// // Connect to MongoDB
+// mongoose.connect('mongodb+srv://shahmuskan29072001:MuskanShah@backenddevlopment.0coboxh.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+//     .then(() => console.log('MongoDB connected'))
+//     .catch(err => console.error('MongoDB connection error:', err));
+
+// // Define schema and model for products
+// const ProductSchema = new mongoose.Schema({
+//     title: String,
+//     subtitle: String,
+//     category: String,
+//     price: Number,
+//     detail: String,
+//     rating: Number,
+//     discount: Number,
+//     image: {
+//         filename: String,
+//         contentType: String,
+//         image: Buffer
+//     },
+
+// });
+
+
+
+// const Product = mongoose.model('Product', ProductSchema);
+
+// // Set up multer for handling file uploads
+// const upload = multer({ dest: 'uploads/' }).single('image');
+
+// // Define route for product upload
+// app.post('/upload', (req, res) => {
+//     upload(req, res, async (err) => {
+//         if (err) {
+//             console.error(err);
+//             return res.status(500).send({ error: 'Error uploading image' });
+//         }
+
+//         try {
+//             const { title, subtitle, category, price, detail, rating, discount } = req.body;
+//             const { originalname, mimetype, buffer } = req.file;
+
+//             const product = new Product({
+//                 title,
+//                 subtitle,
+//                 category,
+//                 price,
+//                 detail,
+//                 rating,
+//                 discount,
+//                 image: {
+//                     filename: originalname,
+//                     contentType: mimetype,
+//                     image: buffer
+//                 }
+//             });
+//             await product.save();
+//             res.status(201).send({ message: 'Product uploaded successfully' });
+//         } catch (error) {
+//             console.error(error);
+//             res.status(500).send({ error: 'Error uploading product' });
+//         }
+//     });
+// });
+
+
+// app.get('/products', async (req, res) => {
+//     try {
+//         const { category } = req.query;
+//         // Query products by category
+//         const products = await Product.find({ category });
+//         res.status(200).json(products);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send({ error: 'Error fetching products' });
+//     }
+// });
+
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
